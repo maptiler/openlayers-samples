@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Display a map</title>
+    <title>Display a marker</title>
     <link rel="stylesheet" href="https://cdn.maptiler.com/ol/v6.12.0/ol.css" type="text/css">
     <script src="https://cdn.maptiler.com/ol/v6.12.0/ol.js"></script>
     <style>
@@ -40,10 +40,27 @@
         target: 'map',
         view: new ol.View({
           constrainResolution: true,
-          center: ol.proj.fromLonLat([16.62662018, 49.2125578]),
-          zoom: 14
+          center: ol.proj.fromLonLat([12.550343, 55.665957]),
+          zoom: 9
         })
       });
+      const layer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+          features: [
+            new ol.Feature({
+              geometry: new ol.geom.Point(ol.proj.fromLonLat([12.550343, 55.665957])),
+            })
+          ]
+        }),
+        style: new ol.style.Style({
+          image: new ol.style.Icon({
+            anchor: [0.5, 1],
+            crossOrigin: 'anonymous',
+            src: 'marker-icon.png',
+          })
+        })
+      });
+      map.addLayer(layer);
     </script>
   </body>
 </html>
