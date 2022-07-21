@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display a raster image</title>
+    <link rel="stylesheet" href="https://cdn.maptiler.com/ol/v6.12.0/ol.css" type="text/css">
+    <script src="https://cdn.maptiler.com/ol/v6.12.0/ol.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        position: absolute; 
+        top: 0; 
+        right: 0; 
+        bottom: 0; 
+        left: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      const key = 'YOUR_MAPTILER_API_KEY_HERE';
+      const source = new ol.source.TileJSON({
+        url: `https://api.maptiler.com/maps/basic-v2/tiles.json?key=${key}`,
+        tileSize: 512,
+        crossOrigin: 'anonymous'
+      });
+
+      const map = new ol.Map({
+        layers: [
+          new ol.layer.Tile({
+            source: source
+          })
+        ],
+        target: 'map',
+        view: new ol.View({
+          constrainResolution: true,
+          center: ol.proj.fromLonLat([4.64086758, 50.9001362]),
+          zoom: 18
+        })
+      });
+      const layer = new ol.layer.Image({
+        source: new ol.source.ImageStatic({
+          url: 'img/aerial_wgs84.png',
+          projection: 'EPSG:4326',
+          imageExtent: [4.639663696289062, 50.89935199434383, 4.642066955566406, 50.900867668253724],
+        }),
+      })
+      map.addLayer(layer);
+    </script>
+  </body>
+</html>
