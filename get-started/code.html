@@ -31,12 +31,17 @@
         crossOrigin: 'anonymous'
       });
 
+      const attribution = new ol.control.Attribution({
+        collapsible: false,
+      });
+      
       const map = new ol.Map({
         layers: [
           new ol.layer.Tile({
             source: source
           })
         ],
+        controls: ol.control.defaults({attribution: false}).extend([attribution]),
         target: 'map',
         view: new ol.View({
           constrainResolution: true,
