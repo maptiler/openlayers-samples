@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Display a choropleth Map from GeoJSON</title>
+    <link rel="stylesheet" href="https://cdn.maptiler.com/ol/v6.12.0/ol.css" type="text/css">
+    <script src="https://cdn.maptiler.com/ol/v6.12.0/ol.js"></script>
+    <style>
+      #map {position: absolute; top: 0; right: 0; bottom: 0; left: 0;}
+      .ol-popup {
+        position: absolute;
+        background-color: white;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #cccccc;
+        bottom: 12px;
+        left: -50px;
+        min-width: 280px;
+      }
+      .ol-popup:after, .ol-popup:before {
+        top: 100%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+      }
+      .ol-popup:after {
+        border-top-color: white;
+        border-width: 10px;
+        left: 48px;
+        margin-left: -10px;
+      }
+      .ol-popup:before {
+        border-top-color: #cccccc;
+        border-width: 11px;
+        left: 48px;
+        margin-left: -11px;
+      }
+      .ol-popup-closer {
+        text-decoration: none;
+        position: absolute;
+        top: 2px;
+        right: 8px;
+      }
+      .ol-popup-closer:after {
+        content: "✖";
+      }
+      .legend {
+        background-color: #000;
+        border-radius: 3px;
+        bottom: 30px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        color: #fff ;
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        padding: 10px;
+        position: absolute;
+        right: 10px;
+        z-index: 1;
+      }
+
+      .legend h4 {
+        margin: 0 0 10px;
+      }
+
+      .legend div span {
+        border-radius: 50%;
+        display: inline-block;
+        height: 10px;
+        margin-right: 5px;
+        width: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map">
+      <a href="https://www.maptiler.com" style="position:absolute;left:10px;bottom:10px;z-index:999;"><img src="https://api.maptiler.com/resources/logo.svg" alt="MapTiler logo"></a>
+      <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
+      </div>
+    </div>
+    <div id="state-legend" class="legend">
+      <h4>Mean age of </br> women at first marriage </h4>
+        <div><span style="background-color: #fff5eb"></span>23</div>
+        <div><span style="background-color: #fee6ce"></span>24</div>
+        <div><span style="background-color: #fdd0a2"></span>25</div>
+        <div><span style="background-color: #fdae6b"></span>26</div>
+        <div><span style="background-color: #fd8d3c"></span>27</div>
+        <div><span style="background-color: #f16913"></span>28</div>
+        <div><span style="background-color: #d94801"></span>29</div>
+        <div><span style="background-color: #8c2d04"></span>30</div>
+    </div>
+    <script>
+      const key = 'YOUR_MAPTILER_API_KEY_HERE';
+      
+      const container = document.getElementById('popup');
+      const content = document.getElementById('popup-content');
+      const closer = document.getElementById('popup-closer');
+      const overlay = new ol.Overlay({
+        element: container,
+        autoPan: {
+          animation: {
+            duration: 250,
+          },
+        },
+      });
+      closer.onclick = function () {
+        overlay.setPosition(undefined);
+        closer.blur();
+        return false;
+      };
+      
+      const source = new ol.source.TileJSON({
+        url: `https://api.maptiler.com/maps/streets/tiles.json?key=${key}`, // source URL
+        tileSize: 512,
+        crossOrigin: 'anonymous'
+      });
+
+      const attribution = new ol.control.Attribution({
+        collapsible: false,
+      });
+
+      const map = new ol.Map({
+        layers: [
+          new ol.layer.Tile({
+            source: source
+          })
+        ],
+        overlays: [overlay],
+        controls: ol.control.defaults({attribution: false}).extend([attribution]),
+        target: 'map',
+        view: new ol.View({
+          constrainResolution: true,
+          center: ol.proj.fromLonLat([13.39, 52.51]), // starting position [lng, lat]
+          zoom: 3 // starting zoom
+        })
+      });
+      const styles = function(feature,resolution) {
+        if (feature.get('age') >= 30) {color = '#8c2d04' ;}
+        else if (feature.get('age') >= 29 ){color ='#d94801';}
+        else if (feature.get('age') >= 28 ){color ='#f16913';}
+        else if (feature.get('age') >= 27 ){color ='#fd8d3c';}
+        else if (feature.get('age') >= 26 ){color ='#fdae6b';}
+        else if (feature.get('age') >= 25 ){color ='#fdd0a2';}
+        else if (feature.get('age') >= 24 ){color ='#fee6ce';}
+        else {color = '#fff5eb';}
+
+          return  [
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: 'black',
+              width: 0.7,
+            }),
+            fill: new ol.style.Fill({
+              color: color,
+            }),
+          }),
+        ]
+      };
+      const geojson = new ol.layer.Vector({
+        source: new ol.source.Vector({
+          format: new ol.format.GeoJSON(),
+          url: `https://api.maptiler.com/data/YOUR_CUSTOM_MAP_ID/features.json?key=${key}`,
+        }),
+        style: styles
+      });
+      map.addLayer(geojson);
+      map.on('click', function (evt) {
+        const features = map.getFeaturesAtPixel(evt.pixel);
+        const feature = features.length ? features[0] : undefined;
+        if (feature.get('age')) {
+          const coordinate = evt.coordinate;
+          content.innerHTML = `<h3>Average age of </br> women at first marriage</h3><p>${feature.get('age')}</p>`;
+          overlay.setPosition(coordinate);
+        } else {
+          overlay.setPosition(undefined);
+        }
+      });
+    </script>
+  </body>
+</html>
