@@ -20,7 +20,7 @@
         collapsible: false,
       });
       const parser = new ol.format.WMTSCapabilities();
-      fetch(`https://api.maptiler.com/maps/streets/WMTSCapabilities.xml?key=${key}`)
+      fetch(`https://api.maptiler.com/maps/streets-v2/WMTSCapabilities.xml?key=${key}`)
       .then(function (response) {
         return response.text();
       })
