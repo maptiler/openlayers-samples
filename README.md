@@ -1,13 +1,16 @@
-# openlayers-samples
+# OpenLayers Examples
 
 ![maintenance-status](https://img.shields.io/badge/maintenance-deprecated-red.svg)
 
-### Check the updated examples [here](https://docs.maptiler.com/openlayers/)
+![MapTiler - Maps for developers](https://raw.githubusercontent.com/maptiler/.github/main/profile/assets/maptiler.jpg)
 
-MapTiler code samples for OpenLayers
+Please check the updated MapTiler [OpenLayers examples](https://docs.maptiler.com/openlayers/examples) on how to create maps with OpenLayers.
 
-:warning: you will need to replace **YOUR_MAPTILER_API_KEY_HERE** with your own MapTiler API key.
+Some of the Leaflet JS examples:
 
-Your MapTiler account access key is on your MapTiler [Cloud](https://cloud.maptiler.com/account/keys/) account page. 
+* [How to use Vector Tiles in OpenLayers](https://docs.maptiler.com/openlayers/examples/vector-tiles-in-openlayers/)
+* [How to search places using OpenLayers geocoding control](https://docs.maptiler.com/openlayers/examples/geocoding-control/)
+* [How to show Point data from GeoJSON on the Map with OpenLayers](https://docs.maptiler.com/openlayers/examples/geojson-points/)
+* [How to create a choropleth Map from GeoJSON using OpenLayers](https://docs.maptiler.com/openlayers/examples/choropleth-geojson/)
 
-:information_source: If you don't have an API key, you can [create it for **FREE**](https://cloud.maptiler.com/start)
+... and more extra [OpenLayers Examples](https://docs.maptiler.com/openlayers/examples)
